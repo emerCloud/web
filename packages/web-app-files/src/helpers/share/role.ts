@@ -173,11 +173,11 @@ export const peopleRoleCustomFolder = new CustomShareRole(
   ]
 )
 export const peopleRoleDenyFolder = new PeopleShareRole(
-  'deny',
+  'denied',
   true,
-  $gettext('Deny'),
-  $gettext('deny'),
-  [SharePermissions.deny]
+  $gettext('No access'),
+  $gettext('no access'),
+  [SharePermissions.denied]
 )
 export const linkRoleViewerFile = new LinkShareRole(
   'viewer',
@@ -221,9 +221,13 @@ export const linkRoleUploaderFolder = new LinkShareRole(
   $gettext('uploader'),
   [SharePermissions.create]
 )
-export const spaceRoleDeny = new SpaceShareRole('deny', false, $gettext('Deny'), $gettext('deny'), [
-  SharePermissions.deny
-])
+export const spaceRoleDeny = new SpaceShareRole(
+  'denied',
+  false,
+  $gettext('Deny'),
+  $gettext('deny'),
+  [SharePermissions.denied]
+)
 export const spaceRoleViewer = new SpaceShareRole(
   'viewer',
   false,

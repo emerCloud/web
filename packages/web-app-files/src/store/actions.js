@@ -216,10 +216,7 @@ export default {
   },
   renameFile(context, { file, newValue, client, isPublicLinkContext, isSameResource }) {
     if (file !== undefined && newValue !== undefined && newValue !== file.name) {
-      const newPath =
-        file.path === '/'
-          ? `${file.webDavPath}/`
-          : file.webDavPath.slice(1, file.webDavPath.lastIndexOf('/') + 1)
+      let newPath = file.webDavPath.slice(1, file.webDavPath.lastIndexOf('/') + 1)
       if (isPublicLinkContext) {
         return client.publicFiles
           .move(
@@ -233,6 +230,14 @@ export default {
             }
           })
       }
+      console.log(file)
+      if (file.isReceivedShare()) {
+        newPath =
+          context.getters.spaces.find((space) => space.driveAlias === 'virtual/shares')
+            ?.webDavPath + '/'
+        console.log(newPath)
+      }
+
       return client.files.move(file.webDavPath, newPath + newValue).then(() => {
         if (!isSameResource) {
           context.commit('RENAME_FILE', { file, newValue, newPath })

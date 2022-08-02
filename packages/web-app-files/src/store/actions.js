@@ -230,12 +230,10 @@ export default {
             }
           })
       }
-      console.log(file)
       if (file.isReceivedShare()) {
-        newPath =
-          context.getters.spaces.find((space) => space.driveAlias === 'virtual/shares')
-            ?.webDavPath + '/'
-        console.log(newPath)
+        newPath = `${
+          context.getters.spaces.find((space) => space.driveAlias === 'virtual/shares')?.webDavPath
+        }/`
       }
 
       return client.files.move(file.webDavPath, newPath + newValue).then(() => {

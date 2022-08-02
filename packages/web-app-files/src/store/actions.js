@@ -233,7 +233,7 @@ export default {
           })
       }
 
-      if (context.getters.capabilities.share_jail === true && file.isReceivedShare()) {
+      if (context.rootGetters.capabilities?.spaces?.share_jail === true && file.isReceivedShare()) {
         newPath = `/spaces/${SHARE_JAIL_ID}!${SHARE_JAIL_ID}/`
       }
 

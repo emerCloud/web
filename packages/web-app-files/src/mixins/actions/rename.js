@@ -2,7 +2,8 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import { isSameResource, extractNameWithoutExtension } from '../../helpers/resource'
 import { getParentPaths } from '../../helpers/path'
 import { buildResource } from '../../helpers/resources'
-import { isLocationTrashActive, isLocationSharesActive, isLocationSpacesActive } from '../../router'
+import { isLocationTrashActive, isLocationSharesActive } from '../../router'
+import rename from '../spaces/actions/rename'
 
 export default {
   computed: {
@@ -65,8 +66,10 @@ export default {
         const parentPaths = getParentPaths(resources[0].path, false).map((path) => {
           return prefix + path
         })
-        parentResources = await this.$client.files.list(parentPaths[0], 1)
-        parentResources = parentResources.map(buildResource)
+        if (parentPaths.length) {
+          parentResources = await this.$client.files.list(parentPaths[0], 1)
+          parentResources = parentResources.map(buildResource)
+        }
       }
 
       const confirmAction = (newName) => {

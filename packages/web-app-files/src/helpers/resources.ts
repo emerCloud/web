@@ -150,7 +150,6 @@ export function buildSpace(space) {
     path: '',
     webDavPath: buildWebDavSpacesPath(space.id, ''),
     driveType: space.driveType,
-    driveAlias: space.driveAlias,
     type: 'space',
     isFolder: true,
     mdate: space.lastModifiedDateTime,

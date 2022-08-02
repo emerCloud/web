@@ -19,6 +19,7 @@ import { ShareTypes } from '../helpers/share'
 import { sortSpaceMembers } from '../helpers/space'
 import get from 'lodash-es/get'
 import { ClipboardActions } from '../helpers/clipboardActions'
+import { SHARE_JAIL_ID } from '../services/folder'
 
 const allowSharePermissions = (getters) => {
   return get(getters, `capabilities.files_sharing.resharing`, true)
@@ -217,6 +218,7 @@ export default {
   renameFile(context, { file, newValue, client, isPublicLinkContext, isSameResource }) {
     if (file !== undefined && newValue !== undefined && newValue !== file.name) {
       let newPath = file.webDavPath.slice(1, file.webDavPath.lastIndexOf('/') + 1)
+
       if (isPublicLinkContext) {
         return client.publicFiles
           .move(
@@ -230,10 +232,9 @@ export default {
             }
           })
       }
+
       if (file.isReceivedShare()) {
-        newPath = `${
-          context.getters.spaces.find((space) => space.driveAlias === 'virtual/shares')?.webDavPath
-        }/`
+        newPath = `/spaces/${SHARE_JAIL_ID}!${SHARE_JAIL_ID}/`
       }
 
       return client.files.move(file.webDavPath, newPath + newValue).then(() => {

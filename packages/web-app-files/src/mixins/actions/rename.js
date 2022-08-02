@@ -3,7 +3,6 @@ import { isSameResource, extractNameWithoutExtension } from '../../helpers/resou
 import { getParentPaths } from '../../helpers/path'
 import { buildResource } from '../../helpers/resources'
 import { isLocationTrashActive, isLocationSharesActive } from '../../router'
-import rename from '../spaces/actions/rename'
 
 export default {
   computed: {

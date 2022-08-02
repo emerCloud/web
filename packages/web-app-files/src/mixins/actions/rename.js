@@ -36,15 +36,6 @@ export default {
             if (resources.length !== 1) {
               return false
             }
-            // FIXME: once renaming shares in share_jail has been sorted out backend side we can enable renaming shares again
-            if (
-              this.capabilities?.spaces?.share_jail === true &&
-              (isLocationSharesActive(this.$router, 'files-shares-with-me') ||
-                (isLocationSpacesActive(this.$router, 'files-spaces-share') &&
-                  resources[0].path === '/'))
-            ) {
-              return false
-            }
 
             const renameDisabled = resources.some((resource) => {
               return !resource.canRename()

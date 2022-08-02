@@ -216,7 +216,10 @@ export default {
   },
   renameFile(context, { file, newValue, client, isPublicLinkContext, isSameResource }) {
     if (file !== undefined && newValue !== undefined && newValue !== file.name) {
-      const newPath = file.webDavPath.slice(1, file.webDavPath.lastIndexOf('/') + 1)
+      const newPath =
+        file.path === '/'
+          ? `${file.webDavPath}/`
+          : file.webDavPath.slice(1, file.webDavPath.lastIndexOf('/') + 1)
       if (isPublicLinkContext) {
         return client.publicFiles
           .move(

@@ -3,16 +3,25 @@ import Vue from 'vue'
 import { set, has } from 'lodash-es'
 
 const state = {
-  spaces: []
+  spaces: [],
+  spacesLoading: false
 }
 
 const getters = {
-  spaces: (state) => state.spaces
+  spaces: (state) => {
+    return state.spaces
+  },
+  spacesLoading: (state) => {
+    return state.spacesLoading
+  }
 }
 
 const mutations = {
-  LOAD_SPACES(state, spaces) {
+  SET_SPACES(state, spaces) {
     state.spaces = spaces
+  },
+  SET_SPACES_LOADING(state, loading) {
+    state.spacesLoading = loading
   },
   /**
    * Updates a single space field. If the space with given id doesn't exist nothing will happen.
@@ -62,13 +71,18 @@ const mutations = {
 
 const actions = {
   async loadSpaces(context, { graphClient }) {
-    const graphResponse = await graphClient.drives.listMyDrives()
-    if (!graphResponse.data) {
-      return
-    }
+    context.commit('SET_SPACES_LOADING', true)
+    try {
+      const graphResponse = await graphClient.drives.listMyDrives()
+      if (!graphResponse.data) {
+        return
+      }
 
-    const spaces = graphResponse.data.value.map((space) => buildSpace(space))
-    context.commit('LOAD_SPACES', spaces)
+      const spaces = graphResponse.data.value.map((space) => buildSpace(space))
+      context.commit('SET_SPACES', spaces)
+    } finally {
+      context.commit('SET_SPACES_LOADING', false)
+    }
   }
 }
 

@@ -19,7 +19,7 @@
       />
       <details-and-edit
         v-if="quicklink"
-        :available-role-options="availableRoleOptions"
+        :available-role-options="getAvailableRoleOptions(quicklink)"
         :can-rename="false"
         :expiration-date="expirationDate"
         :is-folder-share="highlightedFile.isFolder"
@@ -50,7 +50,7 @@
       >
         <name-and-copy :link="link" />
         <details-and-edit
-          :available-role-options="availableRoleOptions"
+          :available-role-options="getAvailableRoleOptions(link)"
           :can-rename="true"
           :expiration-date="expirationDate"
           :is-folder-share="highlightedFile.isFolder"
@@ -85,7 +85,7 @@
         >
           <name-and-copy :link="link" />
           <details-and-edit
-            :available-role-options="availableRoleOptions"
+            :available-role-options="getAvailableRoleOptions(link)"
             :expiration-date="expirationDate"
             :is-folder-share="true"
             :is-modifiable="false"
@@ -571,6 +571,23 @@ export default defineComponent({
             status: 'danger'
           })
         })
+    },
+
+    getAvailableRoleOptions(link) {
+      if (this.share?.incoming && this.canCreatePublicLinks) {
+        return LinkShareRoles.filterByBitmask(
+          parseInt(this.share.permissions),
+          this.highlightedFile.isFolder,
+          this.hasPublicLinkEditing
+        )
+      }
+
+      return LinkShareRoles.list(
+        this.highlightedFile.isFolder,
+        this.hasPublicLinkEditing,
+        this.hasPublicLinkAliasSupport,
+        !!link.password
+      )
     }
   }
 })

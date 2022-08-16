@@ -352,9 +352,14 @@ export abstract class LinkShareRoles {
     linkRoleUploaderFolder
   ]
 
-  static list(isFolder: boolean, canEditFile = false, hasAliasLinks = false): ShareRole[] {
+  static list(
+    isFolder: boolean,
+    canEditFile = false,
+    hasAliasLinks = false,
+    hasPassword = false
+  ): ShareRole[] {
     return [
-      ...(hasAliasLinks ? [linkRoleInternalFile, linkRoleInternalFolder] : []),
+      ...(hasAliasLinks && !hasPassword ? [linkRoleInternalFile, linkRoleInternalFolder] : []),
       ...this.all,
       ...(canEditFile ? [linkRoleEditorFile] : [])
     ].filter((r) => r.folder === isFolder)

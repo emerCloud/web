@@ -304,7 +304,7 @@ export default defineComponent({
           })
         }
       }
-      if (!this.isPasswordEnforced && !this.link.password) {
+      if (!this.isPasswordEnforced && !this.link.password && !this.isAliasLink) {
         result.push({
           id: 'add-password',
           title: this.$gettext('Add password'),
@@ -378,6 +378,10 @@ export default defineComponent({
 
     passwortProtectionTooltip() {
       return this.$gettext('This link is password-protected')
+    },
+
+    isAliasLink() {
+      return this.link.permissions === '0'
     }
   },
   watch: {

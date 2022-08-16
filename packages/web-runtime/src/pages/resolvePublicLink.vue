@@ -26,7 +26,12 @@
           </h2>
         </div>
         <div class="oc-card-body oc-link-resolve-error-message">
-          <p class="oc-text-xlarge">{{ loadTokenInfoTask.last.error }}</p>
+          <p v-if="loadTokenInfoTask.isError" class="oc-text-xlarge">
+            {{ loadTokenInfoTask.last.error }}
+          </p>
+          <p v-if="loadTokenInfoTask.isError" class="oc-text-xlarge">
+            {{ loadTokenInfoTask.last.error }}
+          </p>
         </div>
       </template>
       <template v-else-if="isPasswordRequiredTask.last && isPasswordRequiredTask.last.value">
@@ -175,7 +180,7 @@ export default defineComponent({
   methods: {
     async resolvePublicLink(passwordRequired) {
       let publicLink
-      // @TODO handle password
+
       if (this.tokenInfo && !passwordRequired) {
         const fullPath = this.tokenInfo.storage_id + '$' + this.tokenInfo.space_id + '!' + this.tokenInfo.opaque_id
 

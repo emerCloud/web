@@ -148,7 +148,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters(['configuration', 'user']),
+    ...mapGetters(['configuration']),
 
     pageTitle() {
       return this.$gettext(this.$route.meta.title)
@@ -181,10 +181,13 @@ export default defineComponent({
 
         try {
           publicLink = await this.loadPublicLinkTask.perform()
-        } catch (e) {
+        } catch (error) {
+          if (error.statusCode !== 404) {
+            throw error
+          }
           // alias link
           if (!this.isLoggedInUser) {
-            // @TODO add redirect to the actual route
+            await authService.loginUser(queryItemAsString(`/files/spaces/personal/${fullPath}`))
             return this.$router.push({ name: '/login' })
           }
 

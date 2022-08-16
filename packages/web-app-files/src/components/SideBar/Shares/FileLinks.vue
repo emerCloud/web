@@ -578,7 +578,8 @@ export default defineComponent({
         return LinkShareRoles.filterByBitmask(
           parseInt(this.share.permissions),
           this.highlightedFile.isFolder,
-          this.hasPublicLinkEditing
+          this.hasPublicLinkEditing,
+          !!link.password
         )
       }
 

@@ -29,8 +29,8 @@
           <p v-if="loadTokenInfoTask.isError" class="oc-text-xlarge">
             {{ loadTokenInfoTask.last.error }}
           </p>
-          <p v-if="loadTokenInfoTask.isError" class="oc-text-xlarge">
-            {{ loadTokenInfoTask.last.error }}
+          <p v-if="isPasswordRequiredTask.isError" class="oc-text-xlarge">
+            {{ isPasswordRequiredTask.last.error }}
           </p>
         </div>
       </template>

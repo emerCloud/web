@@ -376,15 +376,17 @@ export abstract class LinkShareRoles {
    * @param isFolder
    * @param canEditFile
    * @param hasAliasLinks
+   * @param hasPassword
    */
   static filterByBitmask(
     bitmask: number,
     isFolder: boolean,
     canEditFile = false,
-    hasAliasLinks = false
+    hasAliasLinks = false,
+    hasPassword = false
   ): ShareRole[] {
     return [
-      ...(hasAliasLinks ? [linkRoleInternalFile, linkRoleInternalFolder] : []),
+      ...(hasAliasLinks && !hasPassword ? [linkRoleInternalFile, linkRoleInternalFolder] : []),
       ...this.all,
       ...(canEditFile ? [linkRoleEditorFile] : [])
     ].filter((r) => {

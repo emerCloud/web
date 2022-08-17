@@ -183,7 +183,11 @@ import { basename } from 'path'
 import { DateTime } from 'luxon'
 import { mapActions } from 'vuex'
 import { createLocationSpaces, isLocationSpacesActive } from '../../../../router'
-import { LinkShareRoles } from 'web-client/src/helpers/share'
+import {
+  linkRoleInternalFile,
+  linkRoleInternalFolder,
+  LinkShareRoles
+} from 'web-client/src/helpers/share'
 import { defineComponent } from '@vue/runtime-core'
 import { formatDateFromDateTime, formatRelativeDateFromDateTime } from 'web-pkg/src/helpers'
 
@@ -381,7 +385,9 @@ export default defineComponent({
     },
 
     isAliasLink() {
-      return this.link.permissions === '0'
+      return [linkRoleInternalFolder.label, linkRoleInternalFile.label].includes(
+        this.link.description
+      )
     }
   },
   watch: {

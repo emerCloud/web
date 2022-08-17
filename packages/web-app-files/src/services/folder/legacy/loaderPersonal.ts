@@ -40,15 +40,18 @@ export class FolderLoaderLegacyPersonal implements FolderLoader {
         )
         resources = resources.map(buildResource)
 
-        const currentFolder = resources.shift()
-        const hasShareJail = useCapabilityShareJailEnabled(store)
-        yield store.dispatch('Files/loadSharesTree', {
-          client,
-          path: currentFolder.path
-        })
+        const currentFolder =
+          resources.length > 1 || resources[0].isFolder ? resources.shift() : undefined
+        if (currentFolder) {
+          const hasShareJail = useCapabilityShareJailEnabled(store)
+          yield store.dispatch('Files/loadSharesTree', {
+            client,
+            path: currentFolder.path
+          })
 
-        for (const file of resources) {
-          file.indicators = getIndicators(file, store.state.Files.sharesTree, hasShareJail.value)
+          for (const file of resources) {
+            file.indicators = getIndicators(file, store.state.Files.sharesTree, hasShareJail.value)
+          }
         }
 
         store.commit('Files/LOAD_FILES', {

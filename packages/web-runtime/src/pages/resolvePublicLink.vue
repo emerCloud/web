@@ -121,7 +121,7 @@ export default defineComponent({
         } else {
           tokenInfo = yield owncloudSdk.shares.getUnprotectedTokenInfo(unref(token))
         }
-      } catch (e) { } // oC10
+      } catch (e) { } // backend doesn't support the token info endpoint
 
       ref.tokenInfo = tokenInfo
     })
@@ -196,7 +196,7 @@ export default defineComponent({
             return this.$router.push({ name: '/login' })
           }
 
-          return this.$router.push({ name: 'files-spaces-personal', params: { storageId: fullPath } })
+          return this.$router.push({ name: `files-spaces-personal`, params: { storageId: fullPath } })
         }
       } else {
         publicLink = await this.loadPublicLinkTask.perform()

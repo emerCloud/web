@@ -51,6 +51,7 @@ import {
   usePublicLinkPassword,
   useStore
 } from 'web-pkg/src/composables'
+import { ShareTypes } from 'web-client/src/helpers/share'
 
 export default defineComponent({
   components: { FileInfo, SpaceInfo, SideBar },
@@ -168,6 +169,13 @@ export default defineComponent({
         return !this.highlightedFile
       }
       if (this.hasShareJail && isLocationSpacesActive(this.$router, 'files-spaces-share')) {
+        return false
+      }
+      if (
+        !pathSegments.length &&
+        this.highlightedFile?.shareTypes?.includes(ShareTypes.link.value)
+      ) {
+        // alias link for a single resource
         return false
       }
       return !pathSegments.length

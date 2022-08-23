@@ -173,7 +173,8 @@ export default defineComponent({
       }
       if (
         !pathSegments.length &&
-        this.highlightedFile?.shareTypes?.includes(ShareTypes.link.value)
+        this.highlightedFile?.shareTypes?.includes(ShareTypes.link.value) &&
+        isLocationSpacesActive(this.$router, 'files-spaces-personal')
       ) {
         // alias link for a single resource
         return false

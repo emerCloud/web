@@ -230,15 +230,15 @@ export default defineComponent({
     }
   },
   computed: {
+    currentLinkRole() {
+      return LinkShareRoles.getByBitmask(parseInt(this.link.permissions), this.isFolderShare)
+    },
     currentLinkRoleDescription() {
-      return LinkShareRoles.getByBitmask(
-        parseInt(this.link.permissions),
-        this.isFolderShare
-      ).description(false)
+      return this.currentLinkRole.description(false)
     },
 
     currentLinkRoleLabel() {
-      return LinkShareRoles.getByBitmask(parseInt(this.link.permissions), this.isFolderShare).label
+      return this.currentLinkRole.label
     },
 
     editOptions() {
@@ -385,9 +385,7 @@ export default defineComponent({
     },
 
     isAliasLink() {
-      return [linkRoleInternalFolder.label, linkRoleInternalFile.label].includes(
-        this.link.description
-      )
+      return [linkRoleInternalFolder, linkRoleInternalFile].includes(this.currentLinkRole)
     }
   },
   watch: {

@@ -50,6 +50,16 @@ export function buildResource(resource): Resource {
   }
 
   const id = resource.fileInfo[DavProperty.FileId]
+  const idComponent = resource.name.split('/')[2]
+  let webDavPath
+  if (idComponent?.includes('!')) {
+    // idComponent includes the opaqueID which represents the resource name.
+    // For the webdav path, we need to replace the opaqueID with the actual resource name.
+    const withoutOpaqueId = resource.name.split('!')[0]
+    webDavPath = `${withoutOpaqueId}/${name}`
+  } else {
+    webDavPath = resource.name
+  }
 
   return {
     id,
@@ -59,7 +69,7 @@ export function buildResource(resource): Resource {
     name,
     extension: isFolder ? '' : extension,
     path: resourcePath,
-    webDavPath: resource.name,
+    webDavPath,
     type: isFolder ? 'folder' : resource.type,
     isFolder,
     mdate: resource.fileInfo[DavProperty.LastModifiedDate],

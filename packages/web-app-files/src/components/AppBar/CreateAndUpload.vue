@@ -727,7 +727,6 @@ export default defineComponent({
           conflicts.push(file)
         }
       }
-      console.log(uppyResources)
       if (conflicts.length) {
         this.displayOverwriteDialog(uppyResources, conflicts)
       } else {

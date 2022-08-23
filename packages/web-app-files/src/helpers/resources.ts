@@ -50,9 +50,9 @@ export function buildResource(resource): Resource {
   }
 
   const id = resource.fileInfo[DavProperty.FileId]
-  const idComponent = resource.name.split('/')[2]
+  const pathParts = resource.name.split('/')
   let webDavPath
-  if (idComponent?.includes('!')) {
+  if (pathParts.length === 3 && !isFolder && pathParts[2].includes('!')) {
     // idComponent includes the opaqueID which represents the resource name.
     // For the webdav path, we need to replace the opaqueID with the actual resource name.
     const withoutOpaqueId = resource.name.split('!')[0]

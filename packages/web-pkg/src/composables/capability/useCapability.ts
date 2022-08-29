@@ -28,12 +28,6 @@ export const useCapabilityCoreSupportUrlSigning = createCapabilityComposable(
   'core.support-url-signing',
   false
 )
-
-export const useCapabilityFilesSharingResharing = createCapabilityComposable(
-  'files_sharing.resharing',
-  true
-)
-
 export const useCapabilitySpacesEnabled = createCapabilityComposable('spaces.enabled', false)
 export const useCapabilityProjectSpacesEnabled = createCapabilityComposable(
   'spaces.projects',
@@ -52,11 +46,15 @@ export const useCapabilityFilesTusExtension = createCapabilityComposable<string>
   'files.tus_support.extension',
   ''
 )
+export const useCapabilityFilesSharingResharing = createCapabilityComposable(
+  'files_sharing.resharing',
+  true
+)
 export const useCapabilityFilesSharingPublicCanEdit = createCapabilityComposable(
-  'files.files_sharing.public.can_edit',
+  'files_sharing.public.can_edit',
   false
 )
 export const useCapabilityFilesSharingPublicAlias = createCapabilityComposable(
-  'files.files_sharing.public.alias',
+  'files_sharing.public.alias',
   false
 )

@@ -82,10 +82,11 @@ import {
   useClientService,
   useRouteParam,
   useRouteQuery,
-  useStore
-} from 'web-pkg/src/composables'
+  useStore, useUserContext
+} from "web-pkg/src/composables";
 import { useTask } from 'vue-concurrency'
 import { ref, unref, computed, defineComponent } from "@vue/composition-api";
+import isEmpty from "lodash-es/isEmpty";
 
 export default defineComponent({
   name: 'ResolvePublicLink',
@@ -93,13 +94,11 @@ export default defineComponent({
     const { owncloudSdk } = useClientService()
     const store = useStore()
     const token = useRouteParam('token')
+    const isUserContext = useUserContext({ store })
     const password = ref('')
     const tokenInfo = ref({})
-    const isLoggedInUser = computed(() => {
-      return !!store.getters.user?.id
-    })
-    const isPasswordRequiredTask = useTask(function* (signal) {
-      if (unref(tokenInfo)) {
+    const isPasswordRequiredTask = useTask(function* () {
+      if (!isEmpty(unref(tokenInfo))) {
         return unref(tokenInfo).password_protected === 'true'
       }
 
@@ -113,19 +112,19 @@ export default defineComponent({
         throw error
       }
     })
-    const loadTokenInfoTask = useTask(function* (signal, ref) {
-      let tokenInfo
+    const loadTokenInfoTask = useTask(function* () {
+      let response = {}
       try {
-        if (unref(isLoggedInUser)) {
-          tokenInfo = yield owncloudSdk.shares.getProtectedTokenInfo(unref(token))
+        if (unref(isUserContext)) {
+          response = yield owncloudSdk.shares.getProtectedTokenInfo(unref(token))
         } else {
-          tokenInfo = yield owncloudSdk.shares.getUnprotectedTokenInfo(unref(token))
+          response = yield owncloudSdk.shares.getUnprotectedTokenInfo(unref(token))
         }
       } catch (e) { } // backend doesn't support the token info endpoint
-
-      ref.tokenInfo = tokenInfo
+      debugger
+      tokenInfo.value = response
     })
-    const loadPublicLinkTask = useTask(function* (signal) {
+    const loadPublicLinkTask = useTask(function* () {
       const files = yield owncloudSdk.publicFiles.list(
         unref(token),
         unref(password),
@@ -148,7 +147,6 @@ export default defineComponent({
       isPasswordRequiredTask,
       loadPublicLinkTask,
       wrongPassword,
-      isLoggedInUser,
       tokenInfo
     }
   },
@@ -171,7 +169,7 @@ export default defineComponent({
     }
   },
   async mounted() {
-    await this.loadTokenInfoTask.perform(this)
+    await this.loadTokenInfoTask.perform()
     const passwordProtected = await this.isPasswordRequiredTask.perform()
     if (!passwordProtected) {
       await this.resolvePublicLink(false)
@@ -179,29 +177,14 @@ export default defineComponent({
   },
   methods: {
     async resolvePublicLink(passwordRequired) {
-      let publicLink
-
-      if (this.tokenInfo && !passwordRequired) {
-        const fullPath = this.tokenInfo.storage_id + '$' + this.tokenInfo.space_id + '!' + this.tokenInfo.opaque_id
-
-        try {
-          publicLink = await this.loadPublicLinkTask.perform()
-        } catch (error) {
-          if (error.statusCode !== 404) {
-            throw error
-          }
-          // alias link
-          if (!this.isLoggedInUser) {
-            await authService.loginUser(queryItemAsString(`/files/spaces/personal/${fullPath}`))
-            return this.$router.push({ name: '/login' })
-          }
-
-          return this.$router.push({ name: `files-spaces-personal`, params: { storageId: fullPath } })
-        }
-      } else {
-        publicLink = await this.loadPublicLinkTask.perform()
+      if (!isEmpty(this.tokenInfo) && this.tokenInfo.alias_link) {
+        // TODO: determine location (personal, share or project space for the moment) and redirect
+        // auth guard will redirect to login page automatically if needed
+        alert("sorry, alias link implementation is not finalized")
+        return
       }
 
+      const publicLink = await this.loadPublicLinkTask.perform()
       if (this.loadPublicLinkTask.isError) {
         return
       }

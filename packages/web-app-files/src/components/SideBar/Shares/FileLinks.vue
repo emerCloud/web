@@ -562,6 +562,7 @@ export default defineComponent({
           parseInt(this.share.permissions),
           this.highlightedFile.isFolder,
           this.hasPublicLinkEditing,
+          this.hasPublicLinkAliasSupport,
           !!link.password
         )
       }

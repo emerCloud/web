@@ -183,12 +183,15 @@ export default defineComponent({
     }
   },
   watch: {
-    highlightedFile(newFile, oldFile) {
-      if (!this.isSingleResource) {
-        return
-      }
+    highlightedFile: {
+      handler: function (newFile, oldFile) {
+        if (!this.isSingleResource) {
+          return
+        }
 
-      this.fetchFileInfo()
+        this.fetchFileInfo()
+      },
+      deep: true
     },
 
     highlightedFileThumbnail(thumbnail) {

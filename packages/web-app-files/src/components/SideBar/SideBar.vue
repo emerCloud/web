@@ -105,7 +105,7 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapGetters('Files', ['highlightedFile', 'selectedFiles', 'currentFolder']),
+    ...mapGetters('Files', ['highlightedFile', 'selectedFiles']),
     ...mapGetters(['fileSideBars', 'capabilities']),
     ...mapState(['user']),
     availablePanels(): Panel[] {

@@ -4,9 +4,8 @@ import Vuex from 'vuex'
 import GetTextPlugin from 'vue-gettext'
 import fileSideBars from '@files/src/fileSideBars'
 import stubs from '@/tests/unit/stubs'
-import Files from '@/__fixtures__/files'
 import merge from 'lodash-es/merge'
-import { buildResource, renameResource } from '@files/src/helpers/resources'
+import { buildResource } from '@files/src/helpers/resources'
 
 import InnerSideBar from 'web-pkg/src/components/sidebar/SideBar.vue'
 import SideBar from '@files/src/components/SideBar/SideBar.vue'
@@ -20,14 +19,6 @@ jest.mock('@files/src/helpers/resources', () => {
     buildResource: jest.fn()
   }
 })
-
-const simpleOwnFolder = {
-  type: 'folder',
-  ownerId: 'marie',
-  ownerDisplayName: 'Marie',
-  mdate: 'Wed, 21 Oct 2015 07:28:00 GMT',
-  size: '740'
-}
 
 const selectors = {
   noSelectionInfoPanel: 'noselection-stub'

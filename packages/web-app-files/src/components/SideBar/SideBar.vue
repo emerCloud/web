@@ -31,16 +31,13 @@
 
 <script lang="ts">
 import { mapGetters, mapState } from 'vuex'
-import { DavProperties } from 'web-pkg/src/constants'
 import SideBar from 'web-pkg/src/components/sidebar/SideBar.vue'
-import { Panel } from 'web-pkg/src/components/sidebar/'
+import { Panel } from 'web-pkg/src/components/sidebar/types'
 
-import { buildResource } from '../../helpers/resources'
 import {
   isLocationPublicActive,
   isLocationSharesActive,
-  isLocationSpacesActive,
-  isLocationTrashActive
+  isLocationSpacesActive
 } from '../../router'
 import { computed, defineComponent } from '@vue/composition-api'
 
@@ -57,7 +54,7 @@ export default defineComponent({
 
   provide() {
     return {
-      displayedItem: computed(() => this.selectedFile)
+      displayedItem: computed(() => this.highlightedFile)
     }
   },
 
@@ -103,13 +100,12 @@ export default defineComponent({
     return {
       focused: undefined,
       oldPanelName: null,
-      selectedFile: {},
       loading: false
     }
   },
 
   computed: {
-    ...mapGetters('Files', ['highlightedFile', 'selectedFiles']),
+    ...mapGetters('Files', ['highlightedFile', 'selectedFiles', 'currentFolder']),
     ...mapGetters(['fileSideBars', 'capabilities']),
     ...mapState(['user']),
     availablePanels(): Panel[] {
@@ -172,79 +168,8 @@ export default defineComponent({
       }
       return !pathSegments.length
     },
-    highlightedFileThumbnail() {
-      return this.highlightedFile?.thumbnail
-    },
-    highlightedFileFavorite() {
-      return this.highlightedFile?.starred
-    },
     highlightedFileIsSpace() {
       return this.highlightedFile?.type === 'space'
-    }
-  },
-  watch: {
-    highlightedFile: {
-      handler() {
-        if (!this.isSingleResource) {
-          return
-        }
-        this.fetchFileInfo()
-      },
-      deep: true
-    },
-
-    highlightedFileThumbnail(thumbnail) {
-      this.$set(this.selectedFile, 'thumbnail', thumbnail)
-    },
-
-    highlightedFileFavorite(starred) {
-      this.$set(this.selectedFile, 'starred', starred)
-    }
-  },
-  async created() {
-    if (!this.areMultipleSelected) {
-      await this.fetchFileInfo()
-    }
-  },
-  methods: {
-    async fetchFileInfo() {
-      if (!this.highlightedFile) {
-        this.selectedFile = {}
-        return
-      }
-
-      if (
-        isLocationTrashActive(this.$router, 'files-trash-personal') ||
-        isLocationTrashActive(this.$router, 'files-trash-spaces-project') ||
-        this.highlightedFileIsSpace
-      ) {
-        this.selectedFile = { ...this.highlightedFile }
-        return
-      }
-
-      this.loading = true
-      try {
-        let item
-        if (isLocationPublicActive(this.$router, 'files-public-files')) {
-          item = await this.$client.publicFiles.getFileInfo(
-            this.highlightedFile.webDavPath,
-            this.publicLinkPassword,
-            DavProperties.PublicLink
-          )
-        } else {
-          item = await this.$client.files.fileInfo(
-            this.highlightedFile.webDavPath,
-            DavProperties.Default
-          )
-        }
-
-        this.selectedFile = buildResource(item)
-        this.$set(this.selectedFile, 'thumbnail', this.highlightedFile.thumbnail || null)
-      } catch (error) {
-        this.selectedFile = { ...this.highlightedFile }
-        console.error(error)
-      }
-      this.loading = false
     }
   }
 })

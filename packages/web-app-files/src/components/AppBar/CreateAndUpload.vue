@@ -716,7 +716,7 @@ export default defineComponent({
             }
             if (resolveStrategy.strategy === ResolveStrategy.KEEP_BOTH) {
               const newFolderName = resolveFileNameDuplicate(rootFolder, '', this.files)
-              
+
               file.meta.relativeFolder = file.meta.relativeFolder.replace(
                 `/${rootFolder}`,
                 `/${newFolderName}`
@@ -730,10 +730,7 @@ export default defineComponent({
                 `/${newFolderName}`
               )
               const data = file.data as any
-              data.relativePath = data.relativePath.replace(
-                `/${rootFolder}/`,
-                `/${newFolderName}/`
-              )
+              data.relativePath = data.relativePath.replace(`/${rootFolder}/`, `/${newFolderName}/`)
               file.meta.routeItem = `/${newFolderName}`
             }
           }

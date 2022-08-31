@@ -692,6 +692,7 @@ export default defineComponent({
       const resolveStrategies = {}
       for (const file of uppyResources) {
         const relativeFilePath = file.meta.relativePath
+        console.log(file)
         if (relativeFilePath) {
           // Logic for folders, applies to all files inside folder and subfolders
           const rootFolder = relativeFilePath.replace(/^\/+/, '').split('/')[0]
@@ -715,6 +716,7 @@ export default defineComponent({
             }
             if (resolveStrategy.strategy === ResolveStrategy.KEEP_BOTH) {
               const newFolderName = resolveFileNameDuplicate(rootFolder, '', this.files)
+              
               file.meta.relativeFolder = file.meta.relativeFolder.replace(
                 `/${rootFolder}`,
                 `/${newFolderName}`
@@ -723,7 +725,16 @@ export default defineComponent({
                 `/${rootFolder}/`,
                 `/${newFolderName}/`
               )
-              console.log(newFolderName)
+              file.meta.tusEndpoint = file.meta.tusEndpoint.replace(
+                `/${rootFolder}`,
+                `/${newFolderName}`
+              )
+              const data = file.data as any
+              data.relativePath = data.relativePath.replace(
+                `/${rootFolder}/`,
+                `/${newFolderName}/`
+              )
+              file.meta.routeItem = `/${newFolderName}`
             }
           }
         }

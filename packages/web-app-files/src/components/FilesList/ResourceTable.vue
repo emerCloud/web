@@ -1,5 +1,6 @@
 <template>
   <oc-table
+    v-if="!loadSharesTask.isRunning"
     :class="hoverableQuickActions && 'hoverable-quick-actions'"
     :data="resources"
     :fields="fields"
@@ -180,16 +181,21 @@ import * as path from 'path'
 import { determineSortFields } from '../../helpers/ui/resourceTable'
 import {
   useCapabilityProjectSpacesEnabled,
-  useCapabilityShareJailEnabled
+  useCapabilityShareJailEnabled,
+  useClientService,
+  useRouteParam
 } from 'web-pkg/src/composables'
 import Rename from '../../mixins/actions/rename'
-import { defineComponent, PropType } from '@vue/composition-api'
+import { defineComponent, PropType, ref, unref } from '@vue/composition-api'
 import { extractDomSelector } from 'web-client/src/helpers/resource'
 import { Resource } from 'web-client'
 import { ClipboardActions } from '../../helpers/clipboardActions'
 import { ShareTypes } from 'web-client/src/helpers/share'
-import { createLocationSpaces } from '../../router'
+import { createLocationSpaces, createLocationShares } from '../../router'
 import { formatDateFromJSDate, formatRelativeDateFromJSDate } from 'web-pkg/src/helpers'
+import { useTask } from 'vue-concurrency'
+import { DavProperties } from 'web-pkg/src/constants'
+import { buildSharedResource } from '../../helpers/resources'
 
 const mapResourceFields = (resource: Resource, mapping = {}) => {
   return Object.keys(mapping).reduce((result, resourceKey) => {
@@ -388,10 +394,31 @@ export default defineComponent({
     }
   },
   setup() {
+    const { owncloudSdk } = useClientService()
+    const shares = ref([])
+    const loadSharesTask = useTask(function* (signal, ref) {
+      const uniqueShareIds = ref.resources.reduce((acc, resource) => {
+        if (resource.shareId && !acc.includes(resource.shareId)) {
+          acc.push(resource.shareId)
+        }
+        return acc
+      }, [])
+
+      for (const shareId of uniqueShareIds) {
+        const { shareInfo } = yield owncloudSdk.shares.getShare(shareId)
+        shares.value.push(buildSharedResource(shareInfo, true))
+      }
+    })
+
     return {
+      shares,
+      loadSharesTask,
       hasShareJail: useCapabilityShareJailEnabled(),
       hasProjectSpaces: useCapabilityProjectSpacesEnabled()
     }
+  },
+  mounted() {
+    this.loadSharesTask.perform(this)
   },
   data() {
     return {
@@ -610,6 +637,23 @@ export default defineComponent({
         ...this.targetRoute.query
       }
 
+      if (resource.shareId) {
+        if (resource.path === '/') {
+          return createLocationShares('files-shares-with-me')
+        }
+
+        return createLocationSpaces('files-spaces-share', {
+          params: {
+            ...params,
+            shareName: this.shares.find((share) => share.id === resource.shareId)?.name
+          },
+          query: {
+            ...query,
+            shareId: resource.shareId
+          }
+        })
+      }
+
       const matchingSpace = this.getMatchingSpace(resource.storageId)
 
       if (this.hasProjectSpaces) {
@@ -796,6 +840,14 @@ export default defineComponent({
 
       if (!this.hasShareJail) {
         return this.$gettext('All files and folders')
+      }
+
+      if (resource.shareId) {
+        if (resource.path === '/') {
+          return this.$gettext('Shared with me')
+        }
+
+        return this.shares.find((share) => share.id === resource.shareId)?.name
       }
 
       return this.$gettext('Personal')

@@ -183,7 +183,7 @@ import {
   useCapabilityShareJailEnabled
 } from 'web-pkg/src/composables'
 import Rename from '../../mixins/actions/rename'
-import { defineComponent, PropType, ref, unref } from '@vue/composition-api'
+import { defineComponent, PropType } from '@vue/composition-api'
 import { extractDomSelector } from 'web-client/src/helpers/resource'
 import { Resource } from 'web-client'
 import { ClipboardActions } from '../../helpers/clipboardActions'

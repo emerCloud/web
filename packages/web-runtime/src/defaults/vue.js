@@ -6,7 +6,6 @@ import Avatar from '../components/Avatar.vue'
 import focusMixin from '../mixins/focusMixin'
 import lifecycleMixin from '../mixins/lifecycleMixin'
 import ClickOutsideDirective from '../directives/clickOutside'
-import CustomKeyBindings from '../directives/customKeyBindings'
 import VueEvents from 'vue-events'
 import VueScrollTo from 'vue-scrollto'
 import VueResize from 'vue-resize'
@@ -37,7 +36,6 @@ Vue.mixin(focusMixin)
 Vue.mixin(lifecycleMixin)
 
 Vue.directive('click-outside', ClickOutsideDirective)
-Vue.directive('custom-key-bindings', CustomKeyBindings)
 
 // externalize Vue - this is not the Vue instance but the class
 window.Vue = Vue
